@@ -1,31 +1,41 @@
 package main
 
 import (
-	"log"
+    "fmt"
+    "log"
 
-	metrika "github.com/xboston/go-yandex-metrika"
+    Metrika "github.com/xboston/yametrikago"
 )
 
 func main() {
 
-	log.Println("Start")
+    log.Println("Start")
 
-	code := ""
-	clientID := ""
-	clientSecret := ""
+    var (
+        clientId, clientSecret, username, password, token, code string
+        err                                                     error
+    )
 
-	metrika := metrika.NewMetrikaFromCode(code, clientID, clientSecret)
-	metrika.SetDebug(true)
+    //
+    clientId = "bd59b41747a247b1ad96c90131dc6568"
+    clientSecret = ""
+    username = ""
+    password = "2583e49576854531bbc5d7e8669276f5"
 
-	if err := metrika.Authorize(); err != nil {
-		log.Fatal(err.Error())
-	}
+    //
+    code = ""
 
-	counterList, _ := metrika.GetCounterList()
+    // при указании токена остальные параметры не обязательны
+    token = ""
 
-	for _, counter := range counterList.Counters {
-		log.Println(counter.ID, counter.Name, counter.Site)
-	}
+    metrika := Metrika.NewMetrika(clientId, clientSecret, username, password, token, code)
+    metrika.SetDebug(true)
 
-	log.Println("Finish")
+    err = metrika.Authorize()
+    PanicIfErr(err)
+
+    counterList, err := metrika.GetCounterList()
+    PanicIfErr(err)
+
+    Debug(counterList)
 }
